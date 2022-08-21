@@ -1,0 +1,43 @@
+void loop()
+{
+  
+  if (Serial.available() > 0) {
+    byte serialByte = Serial.read();
+    channelsStateMachine(serialByte);
+    //Serial.write(serialByte);
+  }  
+  
+  unsigned long currentMillis = millis();
+ 
+  if(currentMillis - previousMillis > interval) {
+    // save the last time you blinked the LED 
+    previousMillis = currentMillis;   
+
+    // if the LED is off turn it on and vice-versa:
+    if (ledState == LOW) {
+      ledState = HIGH;
+    } else {
+      ledState = LOW;
+    }
+    // set the LED with the ledState of the variable:
+    digitalWrite(ledPin, ledState);
+    
+    sendOdometry();
+    sendCurrent();
+    Serial.println();
+    
+    RefVelFilt = 0.72*RefVelFilt + 0.28*RefVel; 
+    Erro = RefVelFilt-vel_odo1;
+    Ierro = Ierro + Erro;
+    voltage_M1 = (int)(19*(Erro + 0.38*Ierro));
+    set_M1_voltage(voltage_M1);
+    
+    if (motors_timeout > 0){
+      motors_timeout_count++;
+      if (motors_timeout_count >= motors_timeout){
+        set_M1_voltage(0);
+        set_M2_voltage(0);
+      }
+    }
+  }
+}

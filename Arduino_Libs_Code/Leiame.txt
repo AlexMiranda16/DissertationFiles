@@ -1,0 +1,5 @@
+Precisa das bibliotecas em libraries.zip
+
+Colocadas em "My Documents\Arduino\libraries"
+
+Sair do arduino e entrar para as reconhecer. 
